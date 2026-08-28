@@ -2,6 +2,11 @@ import { motion } from 'motion/react';
 import { useState, useRef } from 'react';
 import { useInView } from 'motion/react';
 import { Mail, MapPin, Phone, Send, CheckCircle, XCircle } from 'lucide-react';
+import { SkeletonHeading, SkeletonParagraph } from '../../components/SkeletonLoader';
+
+interface ContactPageProps {
+  isLoading?: boolean;
+}
 
 function ContactInfo({ icon: Icon, title, value, delay }: { icon: any; title: string; value: string; delay: number }) {
   const ref = useRef(null);
@@ -26,7 +31,7 @@ function ContactInfo({ icon: Icon, title, value, delay }: { icon: any; title: st
   );
 }
 
-export default function ContactPage() {
+export default function ContactPage({ isLoading = false }: ContactPageProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,6 +48,40 @@ export default function ContactPage() {
   const [honeypot, setHoneypot] = useState('');
 
   const formRef = useRef<HTMLFormElement>(null);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#e1e2ef] pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-12">
+            <SkeletonHeading level={1} />
+            <div className="mt-4"><SkeletonParagraph lines={2} /></div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-24 bg-gray-300 rounded animate-pulse" />
+                    <div className="h-3 w-32 bg-gray-300 rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-6">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 w-20 bg-gray-300 rounded animate-pulse" />
+                  <div className="h-12 w-full bg-gray-300 rounded animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,7 +218,6 @@ export default function ContactPage() {
               aria-hidden="true"
               className="hidden"
             />
-            {/* Success Message */}
             {submitStatus === 'success' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -190,12 +228,11 @@ export default function ContactPage() {
               >
                 <CheckCircle className="text-green-600 flex-shrink-0" size={24} />
                 <p className="font-['Jersey_10'] text-base text-green-800">
-                  Inquiry received. Thanks for reaching out. I've received your project details and will review them before getting back to you.
+                  Inquiry received. Thanks for reaching out. I'll review your project details and get back to you.
                 </p>
               </motion.div>
             )}
 
-            {/* Error Message */}
             {submitStatus === 'error' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -205,9 +242,7 @@ export default function ContactPage() {
                 className="flex items-start gap-3 p-4 bg-red-100 border-2 border-red-500 rounded-lg"
               >
                 <XCircle className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
-                <p className="font-['Jersey_10'] text-base text-red-800">
-                  {errorMessage}
-                </p>
+                <p className="font-['Jersey_10'] text-base text-red-800">{errorMessage}</p>
               </motion.div>
             )}
 
@@ -225,10 +260,9 @@ export default function ContactPage() {
                 onBlur={() => setFocusedField(null)}
                 required
                 disabled={isSubmitting}
-                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 animate={{
                   borderColor: focusedField === 'name' ? '#a71d31' : '#ffffff',
-                  scale: focusedField === 'name' ? 1.02 : 1
                 }}
                 transition={{ duration: 0.2 }}
               />
@@ -248,10 +282,9 @@ export default function ContactPage() {
                 onBlur={() => setFocusedField(null)}
                 required
                 disabled={isSubmitting}
-                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 animate={{
                   borderColor: focusedField === 'email' ? '#a71d31' : '#ffffff',
-                  scale: focusedField === 'email' ? 1.02 : 1
                 }}
                 transition={{ duration: 0.2 }}
               />
@@ -261,14 +294,14 @@ export default function ContactPage() {
               <label htmlFor="company" className="font-['Jersey_10'] text-lg text-black block mb-2">
                 Company or organisation
               </label>
-              <motion.input
+              <input
                 type="text"
                 id="company"
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -288,9 +321,6 @@ export default function ContactPage() {
                 <option value="Custom website">Custom website</option>
                 <option value="Web application">Web application</option>
                 <option value="Portfolio or personal site">Portfolio or personal site</option>
-                <option value="WordPress website">WordPress website</option>
-                <option value="UI/UX design">UI/UX design</option>
-                <option value="Posters and thumbnails">Posters and thumbnails</option>
               </select>
             </div>
 
@@ -310,7 +340,6 @@ export default function ContactPage() {
                 <option value="As soon as possible">As soon as possible</option>
                 <option value="Within 1-2 months">Within 1-2 months</option>
                 <option value="Within 3-6 months">Within 3-6 months</option>
-                <option value="Flexible">Flexible</option>
               </select>
             </div>
 
@@ -330,7 +359,6 @@ export default function ContactPage() {
                 <option value="To be discussed">To be discussed</option>
                 <option value="R5,000 - R15,000">R5,000 - R15,000</option>
                 <option value="R15,000 - R30,000">R15,000 - R30,000</option>
-                <option value="R30,000+">R30,000+</option>
               </select>
             </div>
 
@@ -338,7 +366,7 @@ export default function ContactPage() {
               <label htmlFor="message" className="font-['Jersey_10'] text-lg text-black block mb-2">
                 Message *
               </label>
-              <motion.textarea
+              <textarea
                 id="message"
                 name="message"
                 value={formData.message}
@@ -348,22 +376,16 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 rows={6}
-                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                animate={{
-                  borderColor: focusedField === 'message' ? '#a71d31' : '#ffffff',
-                  scale: focusedField === 'message' ? 1.02 : 1
-                }}
-                transition={{ duration: 0.2 }}
+                className="w-full px-4 py-3 bg-white border-2 border-transparent rounded-lg font-['Jersey_10'] text-base text-black focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
             <motion.button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 bg-[#a71d31] text-white font-['Jersey_10'] text-xl rounded-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={!isSubmitting ? { scale: 1.02, backgroundColor: '#8a1727' } : {}}
+              className="w-full py-4 bg-[#a71d31] text-white font-['Jersey_10'] text-xl rounded-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#8a1727] transition-colors"
+              whileHover={!isSubmitting ? { scale: 1.02 } : {}}
               whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-              transition={{ duration: 0.2 }}
             >
               {isSubmitting ? (
                 <>

@@ -1,6 +1,11 @@
 import { motion } from 'motion/react';
 import { useInView } from 'motion/react';
 import { useRef } from 'react';
+import { SkeletonHeading, SkeletonParagraph } from '../../components/SkeletonLoader';
+
+interface ResumePageProps {
+  isLoading?: boolean;
+}
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -18,7 +23,28 @@ function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; d
   );
 }
 
-export default function ResumePage() {
+export default function ResumePage({ isLoading = false }: ResumePageProps) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#e1e2ef] pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <SkeletonHeading level={1} />
+          <SkeletonParagraph lines={3} />
+          <SkeletonHeading level={2} />
+          <SkeletonParagraph lines={4} />
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="h-4 w-1/3 bg-gray-300 rounded animate-pulse" />
+                <div className="h-3 w-full bg-gray-300 rounded-full animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#e1e2ef] pt-28 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">

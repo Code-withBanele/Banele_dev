@@ -1,19 +1,9 @@
 import { motion } from 'motion/react';
-import svgPaths from '../imports/svg-5id306sw6k';
-import imgDreamina from 'figma:asset/57d80849e9cad6e92de1480e462b2417b092a847.png';
-import { Github, Facebook, Instagram } from 'lucide-react';
-import MoltenMetal from './MoltenMetal';
-import ASCIIText from '../../components/ASCIIText';
-import DecryptedText from '../../components/DecryptedText';
-
-const workflowSteps = [
-  ['01', 'Tell us what you are building', 'Share the idea, audience, goals, and practical requirements.'],
-  ['02', 'Receive a tailored proposal', 'Your requirements are reviewed before scope, timeline, and approach are agreed.'],
-  ['03', 'Choose a starting direction', 'Begin with a custom design or a curated template direction shaped for your business.'],
-  ['04', 'Review and refine the design', 'Design feedback and revisions lead to a direction ready for development.'],
-  ['05', 'Build and test the project', 'The approved design becomes a responsive website or web application.'],
-  ['06', 'Approve and launch', 'After client verification and final approval, the finished project goes live.'],
-];
+import { useRef } from 'react';
+import { useInView } from 'motion/react';
+import { Github, Facebook, Instagram, ArrowRight } from 'lucide-react';
+import ProjectCard from './ProjectCard';
+import { projects } from '../../data/projects';
 
 export default function HomePage({ onStartProject }: { onStartProject: () => void }) {
   const socialLinks = [
@@ -37,160 +27,83 @@ export default function HomePage({ onStartProject }: { onStartProject: () => voi
     },
   ];
 
+  const technologies = [
+    { category: 'Frontend', items: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion'] },
+    { category: 'Languages', items: ['JavaScript', 'HTML', 'CSS', 'TypeScript'] },
+    { category: 'Tools', items: ['Git', 'GitHub', 'Figma', 'Vite'] },
+  ];
+
+  const featuredProjects = projects.slice(0, 2);
+
   return (
     <main className="min-h-screen bg-[#e1e2ef] pt-20 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-60" aria-hidden="true">
-        <MoltenMetal
-          color1="#a71d31"
-          color2="#e8a0a0"
-          color3="#fff4f0"
-          speed={0.28}
-          scale={3.5}
-          glow={1.4}
-          brightness={0.85}
-          colorMode="ember"
-          mouseStrength={0.2}
-        />
-      </div>
       <div className="max-w-7xl mx-auto">
-        <div className="relative min-h-[calc(100vh-10rem)] flex flex-col items-center justify-center">
-          {/* 3D Avatar as Background Layer */}
+        {/* Hero Section */}
+        <section className="py-12 sm:py-16 lg:py-20 mb-20">
           <motion.div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: 0.15,
-              scale: 1,
-              rotateY: [0, 360]
-            }}
-            transition={{
-              opacity: { duration: 1 },
-              scale: { duration: 1 },
-              rotateY: {
-                duration: 20,
-                repeat: Infinity,
-                ease: 'linear'
-              }
-            }}
-            style={{ transformStyle: 'preserve-3d' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
           >
-            <img 
-              src={imgDreamina} 
-              alt="3D Avatar Background" 
-              className="w-[500px] h-[700px] md:w-[600px] md:h-[800px] lg:w-[700px] lg:h-[900px] object-contain"
-            />
-          </motion.div>
-
-          {/* Hero Text - Now in Foreground */}
-          <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 max-w-5xl">
-            <motion.header
-              className="contents"
+            <motion.h1
+              className="text-5xl sm:text-6xl md:text-7xl font-bold text-black mb-4 sm:mb-6 leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6 }}
             >
-              <motion.h1
-              className="w-full font-['Jersey_10'] text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px] text-[#a71d31] mb-4 sm:mb-6 leading-tight"
+              Banele Mjayezi
+            </motion.h1>
+
+            <motion.div
+              className="text-2xl sm:text-3xl text-[#a71d31] font-semibold mb-6 sm:mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              Software & Web Developer
+            </motion.div>
+
+            <motion.p
+              className="text-lg sm:text-xl text-gray-700 mb-8 sm:mb-12 leading-relaxed max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              I build modern websites and digital experiences with a focus on thoughtful design, clean code, and practical technology. Currently a 2nd-year software development student focused on learning through real-world projects.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              <span className="sr-only">Hi, I'm Banele Innocent Mjayezi</span>
-              <span aria-hidden="true" className="block w-full h-[4.5rem] sm:h-[6rem] md:h-[7rem] lg:h-[8rem] xl:h-[9rem]">
-                <ASCIIText
-                  text="HI, I'M BANELE INNOCENT MJAYEZI"
-                  enableWaves={true}
-                  asciiFontSize={8}
-                  textFontSize={200}
-                  textColor="#a71d31"
-                  planeBaseHeight={8}
-                />
-              </span>
-              </motion.h1>
-            </motion.header>
-
-            <motion.p
-              className="font-['Jersey_10'] text-xl sm:text-2xl md:text-3xl lg:text-[36px] text-[#a71d31] mb-6 sm:mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-            >
-              <DecryptedText
-                text="Software development 2nd year student"
-                animateOn="view"
-                sequential={true}
-                speed={70}
-                className="text-[#a71d31]"
-              />
-            </motion.p>
-
-            <motion.div
-              className="font-['Jersey_10'] text-base sm:text-xl md:text-2xl lg:text-[32px] text-[#a71d31] max-w-4xl tracking-[0.64px] leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              <p>
-                <DecryptedText
-                  text="Currently, I'm focused on practical learning and building real-world projects while exploring modern web development tools. I thrive on learning by doing, improving both my front-end and back-end development skills."
-                  animateOn="view"
-                  sequential={true}
-                  revealDirection="start"
-                  speed={60}
-                  characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
-                  className="text-black"
-                />
-              </p>
+              <motion.a
+                href="#projects"
+                className="px-8 py-3 sm:py-4 bg-[#a71d31] text-white font-medium rounded-lg flex items-center gap-2 hover:bg-[#8a1727] transition-colors"
+                whileHover={{ x: 5 }}
+              >
+                View Projects
+                <ArrowRight size={20} />
+              </motion.a>
+              <motion.button
+                onClick={onStartProject}
+                className="px-8 py-3 sm:py-4 border-2 border-black text-black font-medium rounded-lg hover:bg-black hover:text-white transition-colors"
+                whileHover={{ scale: 1.02 }}
+              >
+                Get in Touch
+              </motion.button>
             </motion.div>
-          </div>
 
-          <section className="relative z-10 w-full border-t border-[#a71d31]/20 pt-16 mt-16" aria-labelledby="how-we-work-heading">
-            <div className="mb-10 max-w-3xl">
-              <h2 id="how-we-work-heading" className="font-['Jersey_10'] text-4xl sm:text-5xl text-black mb-3">
-                How We Work
-              </h2>
-              <p className="font-['Jersey_10'] text-xl sm:text-2xl text-[#a71d31]">
-                A clear path from your first project inquiry to a tested, launch-ready digital experience.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-              {workflowSteps.map(([number, title, description]) => (
-                <article key={number} className="border-l-2 border-[#a71d31] pl-5">
-                  <p className="font-['Jersey_10'] text-2xl text-[#a71d31] mb-2">{number}</p>
-                  <h3 className="font-['Jersey_10'] text-2xl text-black mb-2">{title}</h3>
-                  <p className="font-['Jersey_10'] text-lg text-gray-700">{description}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Design starting directions">
-              <article className="border-2 border-[#a71d31] p-6">
-                <p className="font-['Jersey_10'] text-lg text-[#a71d31] mb-2">OPTION A</p>
-                <h3 className="font-['Jersey_10'] text-3xl text-black mb-2">Custom Design</h3>
-                <p className="font-['Jersey_10'] text-lg text-gray-700">A bespoke visual direction designed around your brand, audience, and goals.</p>
-              </article>
-              <article className="border-2 border-black p-6">
-                <p className="font-['Jersey_10'] text-lg text-[#a71d31] mb-2">OPTION B</p>
-                <h3 className="font-['Jersey_10'] text-3xl text-black mb-2">Curated Template</h3>
-                <p className="font-['Jersey_10'] text-lg text-gray-700">Start from a professionally designed direction and customise it for your business.</p>
-              </article>
-            </div>
-
-            <button
-              type="button"
-              onClick={onStartProject}
-              className="mt-10 px-6 py-3 bg-[#a71d31] text-white font-['Jersey_10'] text-xl rounded-lg"
+            {/* Social Links */}
+            <motion.div
+              className="mt-12 flex justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
             >
-              Start a Project
-            </button>
-          </section>
-
-          {/* Social Media Links Section */}
-          <motion.div
-            className="relative z-20 mt-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6 }}
-          >
-            <div className="flex items-center gap-6">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={social.name}
@@ -198,27 +111,158 @@ export default function HomePage({ onStartProject }: { onStartProject: () => voi
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group relative"
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -3 }}
                   whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2 + index * 0.1 }}
+                  aria-label={social.name}
                 >
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-lg flex items-center justify-center transition-all group-hover:shadow-xl">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center hover:shadow-lg transition-all">
                     <social.icon 
-                      className="w-6 h-6 sm:w-7 sm:h-7 transition-colors" 
+                      className="w-5 h-5 sm:w-6 sm:h-6" 
                       style={{ color: social.color }}
                     />
                   </div>
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white px-3 py-1 rounded text-sm font-['Jersey_10'] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                     {social.name}
                   </div>
                 </motion.a>
               ))}
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Featured Projects Section */}
+        <section id="projects" className="mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="mb-12"
+          >
+            <h2 className="text-4xl sm:text-5xl font-bold text-black mb-4">Selected Work</h2>
+            <p className="text-lg text-gray-600 max-w-2xl">
+              A selection of recent projects showcasing my approach to web development, design, and problem-solving.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {featuredProjects.map((project, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={index}
+                variant="featured"
+              />
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center"
+          >
+            <a
+              href="#projects"
+              className="inline-flex items-center gap-2 text-[#a71d31] font-medium hover:text-[#8a1727] transition-colors"
+            >
+              View all projects
+              <ArrowRight size={20} />
+            </a>
+          </motion.div>
+        </section>
+
+        {/* About Section */}
+        <section className="mb-20 border-t border-gray-300 pt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <h2 className="text-4xl sm:text-5xl font-bold text-black mb-8">About</h2>
+            <div className="max-w-3xl space-y-6">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                I'm a software development student and aspiring web developer based in East London, South Africa. I'm passionate about creating digital experiences that are both functional and beautiful.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                My approach combines practical programming skills with thoughtful design principles. I enjoy the challenge of turning ideas into real working applications, from frontend interfaces to backend logic. I'm currently focused on mastering modern web technologies like React, TypeScript, and full-stack development.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                When I'm not coding, I'm exploring new technologies, contributing to projects, and continuously learning by building. I'm interested in opportunities to collaborate with other developers and work on meaningful projects.
+              </p>
             </div>
           </motion.div>
-        </div>
+        </section>
+
+        {/* Technologies Section */}
+        <section className="mb-20 border-t border-gray-300 pt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <h2 className="text-4xl sm:text-5xl font-bold text-black mb-12">Technologies & Tools</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {technologies.map((group, index) => (
+                <motion.div
+                  key={group.category}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                >
+                  <h3 className="text-xl font-semibold text-black mb-4">{group.category}</h3>
+                  <ul className="space-y-2">
+                    {group.items.map((item) => (
+                      <li key={item} className="text-gray-700">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Contact CTA Section */}
+        <section className="border-t border-gray-300 pt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center max-w-2xl mx-auto"
+          >
+            <h2 className="text-4xl sm:text-5xl font-bold text-black mb-6">Let's Build Something</h2>
+            <p className="text-lg text-gray-700 mb-10">
+              I'm always interested in hearing about new projects and opportunities. Whether you have a specific project in mind or just want to chat about web development, feel free to reach out.
+            </p>
+            <motion.button
+              onClick={onStartProject}
+              className="px-10 py-4 bg-[#a71d31] text-white font-medium rounded-lg hover:bg-[#8a1727] transition-colors text-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Get in Touch
+            </motion.button>
+
+            {/* Contact Info */}
+            <motion.div
+              className="mt-12 space-y-2 text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              <p>Email: <a href="mailto:admin@banele.dev" className="text-[#a71d31] hover:text-[#8a1727] transition-colors">admin@banele.dev</a></p>
+              <p>Location: East London, South Africa</p>
+            </motion.div>
+          </motion.div>
+        </section>
       </div>
     </main>
   );

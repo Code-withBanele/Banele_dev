@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # banel.dev
 
@@ -9,3 +10,6 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# Banele_dev
+>>>>>>> 13d7a62418af8a3cc78ac94502e00b1c229f9dc7
