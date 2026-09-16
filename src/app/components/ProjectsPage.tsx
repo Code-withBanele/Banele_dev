@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import Reveal from './Reveal';
 import ProjectCard from './ProjectCard';
 import { projects } from '../../data/projects';
 import { SkeletonProjectGrid } from '../../components/SkeletonLoader';
@@ -9,26 +9,20 @@ interface ProjectsPageProps {
 
 export default function ProjectsPage({ isLoading = false }: ProjectsPageProps) {
   return (
-    <div className="min-h-screen bg-[#e1e2ef] pt-28 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <h1 className="font-['Jersey_10'] text-4xl sm:text-5xl md:text-6xl text-black mb-4">
-            My Projects
-          </h1>
-          <p className="font-['Jersey_10'] text-xl sm:text-2xl text-[#a71d31]">
-            A collection of my recent work and experiments
+    <div className="page-shell">
+      <div className="page-container">
+        <Reveal className="mb-14 max-w-2xl">
+          <p className="section-kicker">Archive</p>
+          <h1 className="section-title mb-4">My projects</h1>
+          <p className="section-copy">
+            A collection of recent work and experiments.
           </p>
-        </motion.div>
+        </Reveal>
 
         {isLoading ? (
           <SkeletonProjectGrid count={3} />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {projects.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} variant="card" />
             ))}

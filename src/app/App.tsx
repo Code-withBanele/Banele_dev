@@ -20,39 +20,33 @@ export default function App() {
     isLoading: false
   });
 
-  // Simulate page data loading (in real app, this would be async data fetching)
   const loadPageData = useCallback((page: PageType) => {
-    // Check cache first (optimistic rendering)
     const cached = getCache(`page_${page}`);
     if (cached) {
       return Promise.resolve(cached);
     }
 
-    // Simulate network request
     return new Promise((resolve) => {
       const timer = setTimeout(() => {
         const data = { page, loadedAt: Date.now() };
         setCache(`page_${page}`, data);
         resolve(data);
-      }, 300); // 300ms simulated load time
+      }, 300);
 
       return () => clearTimeout(timer);
     });
   }, []);
 
-  // Scroll to top on page change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pageState.page]);
 
   const handleNavigate = useCallback((page: PageType) => {
-    // Optimistic rendering: update UI immediately
     setPageState({
       page,
       isLoading: true
     });
 
-    // Load data in background
     loadPageData(page).then(() => {
       setPageState((prev) => ({
         ...prev,
@@ -62,23 +56,37 @@ export default function App() {
   }, [loadPageData]);
 
   return (
-    <div className="min-h-screen bg-[#e1e2ef] overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--void)] overflow-x-hidden text-[var(--offwhite)]">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:bg-[var(--brand)] focus:text-white focus:px-3 focus:py-2"
+      >
+        Skip to content
+      </a>
+      <div className="site-grain" aria-hidden="true" />
       <Navigation currentPage={pageState.page} onNavigate={handleNavigate} />
-      
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pageState.page}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {pageState.page === 'home' && <HomePage onStartProject={() => handleNavigate('contact')} />}
-          {pageState.page === 'resume' && <ResumePage isLoading={pageState.isLoading} />}
-          {pageState.page === 'projects' && <ProjectsPage isLoading={pageState.isLoading} />}
-          {pageState.page === 'contact' && <ContactPage isLoading={pageState.isLoading} />}
-        </motion.div>
-      </AnimatePresence>
+
+      <div id="main">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pageState.page}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.28 }}
+          >
+            {pageState.page === 'home' && (
+              <HomePage
+                onStartProject={() => handleNavigate('contact')}
+                onViewProjects={() => handleNavigate('projects')}
+              />
+            )}
+            {pageState.page === 'resume' && <ResumePage isLoading={pageState.isLoading} />}
+            {pageState.page === 'projects' && <ProjectsPage isLoading={pageState.isLoading} />}
+            {pageState.page === 'contact' && <ContactPage isLoading={pageState.isLoading} />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

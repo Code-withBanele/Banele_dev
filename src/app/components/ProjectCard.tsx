@@ -1,8 +1,7 @@
-import { motion } from 'motion/react';
-import { useRef } from 'react';
-import { useInView } from 'motion/react';
+import { useLayoutEffect, useRef } from 'react';
 import { ExternalLink, Github } from 'lucide-react';
 import { Project } from '../../data/projects';
+import { gsap, prefersReducedMotion } from '../../lib/gsap';
 
 interface ProjectCardProps {
   project: Project;
@@ -11,167 +10,107 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, index, variant = 'card' }: ProjectCardProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const featured = variant === 'featured';
 
-  if (variant === 'featured') {
-    return (
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 50 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-        transition={{ duration: 0.6, delay: index * 0.15 }}
-        className="group"
-      >
-        <motion.article
-          className="bg-white rounded-lg overflow-hidden shadow-md h-full flex flex-col hover:shadow-lg transition-shadow duration-300"
-          whileHover={{ y: -4 }}
-          transition={{ duration: 0.3 }}
-        >
-          {/* Project Image */}
-          <div className="relative h-64 sm:h-80 overflow-hidden bg-gray-200">
-            <motion.img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-full object-cover"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.4 }}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-          </div>
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
 
-          {/* Project Info */}
-          <div className="p-6 sm:p-8 flex-1 flex flex-col">
-            <h3 className="font-['Jersey_10'] text-2xl sm:text-3xl text-black mb-3 line-clamp-2">
-              {project.title}
-            </h3>
-            
-            <p className="text-base sm:text-lg text-gray-600 mb-5 flex-1 leading-relaxed">
-              {project.description}
-            </p>
+    if (prefersReducedMotion()) {
+      gsap.set(el, { autoAlpha: 1, y: 0 });
+      return;
+    }
 
-            {/* Technologies */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.technologies.slice(0, 4).map((tech, i) => (
-                <span
-                  key={i}
-                  className="font-['Jersey_10'] text-xs sm:text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { autoAlpha: 0, y: 36 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.75,
+          delay: index * 0.08,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        },
+      );
+    }, el);
 
-            {/* Links */}
-            <div className="flex gap-4">
-              {project.liveUrl && (
-                <motion.a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm font-medium text-[#a71d31] hover:text-[#8a1727] transition-colors"
-                  whileHover={{ x: 3 }}
-                >
-                  <ExternalLink size={16} />
-                  Live Demo
-                </motion.a>
-              )}
-              {project.githubUrl && project.githubUrl !== '#' && (
-                <motion.a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#a71d31] transition-colors"
-                  whileHover={{ x: 3 }}
-                >
-                  <Github size={16} />
-                  Code
-                </motion.a>
-              )}
-            </div>
-          </div>
-        </motion.article>
-      </motion.div>
-    );
-  }
+    return () => ctx.revert();
+  }, [index]);
 
-  // Default card variant
   return (
-    <motion.div
+    <article
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group"
+      className="group surface-card overflow-hidden h-full flex flex-col"
+      onMouseMove={(e) => {
+        if (prefersReducedMotion() || !imageRef.current) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        imageRef.current.style.transform = `scale(1.04) translate(${x * 8}px, ${y * 8}px)`;
+      }}
+      onMouseLeave={() => {
+        if (imageRef.current) imageRef.current.style.transform = 'scale(1) translate(0,0)';
+      }}
     >
-      <motion.div
-        className="bg-white rounded-lg overflow-hidden shadow-lg h-full flex flex-col"
-        whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(0,0,0,0.15)' }}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Project Image */}
-        <div className="relative h-48 sm:h-56 overflow-hidden bg-gray-200">
-          <motion.img
-            src={project.image}
-            alt={project.title}
-            className="w-full h-full object-cover"
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.4 }}
-          />
-          <div className="absolute inset-0 bg-[#a71d31]/0 group-hover:bg-[#a71d31]/10 transition-colors duration-300" />
+      <div className={`relative overflow-hidden bg-[#111114] ${featured ? 'h-64 sm:h-80' : 'h-48 sm:h-56'}`}>
+        <img
+          ref={imageRef}
+          src={project.image}
+          alt={project.title}
+          className="w-full h-full object-cover transition-transform duration-500 ease-out"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-transparent to-transparent opacity-70" />
+      </div>
+
+      <div className={`flex-1 flex flex-col ${featured ? 'p-6 sm:p-8' : 'p-6'}`}>
+        <h3 className="font-display text-2xl sm:text-[1.85rem] tracking-[0.04em] text-[var(--offwhite)] mb-3">
+          {project.title}
+        </h3>
+
+        <p className="text-[0.95rem] text-[var(--silver)] mb-5 flex-1 leading-relaxed">
+          {project.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-5">
+          {(featured ? project.technologies.slice(0, 4) : project.technologies).map((tech) => (
+            <span
+              key={tech}
+              className="font-display text-xs tracking-[0.12em] px-2.5 py-1 border border-white/10 text-[#c8c8d0]"
+            >
+              {tech}
+            </span>
+          ))}
         </div>
 
-        {/* Project Info */}
-        <div className="p-6 flex-1 flex flex-col">
-          <h3 className="font-['Jersey_10'] text-2xl sm:text-3xl text-[#a71d31] mb-3">
-            {project.title}
-          </h3>
-          
-          <p className="font-['Jersey_10'] text-base sm:text-lg text-gray-700 mb-4 flex-1">
-            {project.description}
-          </p>
-
-          {/* Technologies */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {project.technologies.map((tech, i) => (
-              <span
-                key={i}
-                className="font-['Jersey_10'] text-sm px-3 py-1 bg-[#e1e2ef] text-black rounded-full"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-
-          {/* Links */}
-          <div className="flex gap-4">
-            {project.liveUrl && (
-              <motion.a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 font-['Jersey_10'] text-base text-[#a71d31] hover:text-[#8a1727] transition-colors"
-                whileHover={{ x: 5 }}
-              >
-                <ExternalLink size={18} />
-                Live Demo
-              </motion.a>
-            )}
-            {project.githubUrl && project.githubUrl !== '#' && (
-              <motion.a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 font-['Jersey_10'] text-base text-black hover:text-[#a71d31] transition-colors"
-                whileHover={{ x: 5 }}
-              >
-                <Github size={18} />
-                {project.liveUrl ? 'Code' : 'View Repository'}
-              </motion.a>
-            )}
-          </div>
+        <div className="flex gap-5">
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs tracking-[0.16em] uppercase text-[var(--brand-hot)] hover:text-white transition-colors"
+            >
+              <ExternalLink size={14} />
+              Live Demo
+            </a>
+          )}
+          {project.githubUrl && project.githubUrl !== '#' && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs tracking-[0.16em] uppercase text-[#c8c8d0] hover:text-white transition-colors"
+            >
+              <Github size={14} />
+              {project.liveUrl ? 'Code' : 'View Repository'}
+            </a>
+          )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </article>
   );
 }
