@@ -84,57 +84,55 @@ export default function ContactPage({ isLoading = false }: ContactPageProps) {
     );
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
 
-    if (honeypot) return;
+  if (honeypot) return;
 
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) {
-      setSubmitStatus('error');
-      setErrorMessage('Something went wrong while sending your message. Please try again.');
-      return;
-    }
+  setIsSubmitting(true);
+  setSubmitStatus('idle');
+  setErrorMessage('');
 
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage('');
+  try {
+    const message = [
+      'Hi Banele, I\'d like to discuss a web development project.',
+      '',
+      `Name: ${formData.name}`,
+      `Email: ${formData.email}`,
+      `Company / Organisation: ${formData.company || 'Not provided'}`,
+      `Project Type: ${formData.projectType || 'Not specified'}`,
+      `Timeline: ${formData.timeline || 'Not specified'}`,
+      `Budget: ${formData.budget || 'Not specified'}`,
+      '',
+      'Project Message:',
+      formData.message,
+    ].join('\n');
 
-    try {
-      const submission = new URLSearchParams({
-        access_key: accessKey,
-        subject: 'New Project Inquiry - banele.dev',
-        name: formData.name,
-        email: formData.email,
-        replyto: formData.email,
-        company: formData.company,
-        project_type: formData.projectType,
-        timeline: formData.timeline,
-        budget: formData.budget,
-        message: formData.message,
-        botcheck: honeypot,
-      });
+    const whatsappUrl = `https://wa.me/${contactConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-        body: submission.toString(),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.success) throw new Error('Web3Forms request failed');
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', company: '', projectType: '', timeline: '', budget: '', message: '' });
-      setTimeout(() => {
-        setSubmitStatus('idle');
-      }, 5000);
-    } catch {
-      setSubmitStatus('error');
-      setErrorMessage('Something went wrong while sending your message. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setSubmitStatus('success');
+    setFormData({
+      name: '',
+      email: '',
+      company: '',
+      projectType: '',
+      timeline: '',
+      budget: '',
+      message: '',
+    });
+
+    setTimeout(() => {
+      setSubmitStatus('idle');
+    }, 5000);
+  } catch {
+    setSubmitStatus('error');
+    setErrorMessage('Something went wrong while opening WhatsApp. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({

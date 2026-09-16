@@ -2,7 +2,7 @@ export const contactConfig = {
   email: 'admin@banele.dev',
   location: 'East London, South Africa',
   phone: '',
-  whatsappNumber: '',
+  whatsappNumber: '27793288324',
   whatsappMessage: "Hi, I'd like to discuss a web development project.",
 } as const;
 
