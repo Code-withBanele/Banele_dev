@@ -38,4 +38,14 @@ export const projects: Project[] = [
     githubUrl: '#',
     image: DailyRead
   },
+   {
+    id: 4,
+    title: 'NEWS SOUTH AFRICA',
+    description: 'A modern editorial website built with React, a WORDPRESS backend, and Tailwind CSS, Utilizing the WordPress REST API to fetch and display news articles in a clean and user-friendly interface, the project also makes use of vercel functions like user authentication, analytics and server side rendering.',
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'WordPress REST API'],
+    liveUrl: 'https://newssa.co.za',
+    githubUrl: '#',
+    image: 'https://www.newssa.co.za/assets/23028179d84c8ac263f16970552b2d9e23bb08f9-wWf8SSeZ.png',
+  },
+
 ];

@@ -5,7 +5,9 @@ import ResumePage from './components/ResumePage';
 import ProjectsPage from './components/ProjectsPage';
 import ContactPage from './components/ContactPage';
 import Navigation from './components/Navigation';
+import GalaxyBackground from './components/Galaxy.tsx';
 import { setCache, getCache } from '../utils/cache';
+
 
 type PageType = 'home' | 'resume' | 'projects' | 'contact';
 
@@ -63,29 +65,34 @@ export default function App() {
       >
         Skip to content
       </a>
-      <div className="site-grain" aria-hidden="true" />
-      <Navigation currentPage={pageState.page} onNavigate={handleNavigate} />
 
-      <div id="main">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pageState.page}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.28 }}
-          >
-            {pageState.page === 'home' && (
-              <HomePage
-                onStartProject={() => handleNavigate('contact')}
-                onViewProjects={() => handleNavigate('projects')}
-              />
-            )}
-            {pageState.page === 'resume' && <ResumePage isLoading={pageState.isLoading} />}
-            {pageState.page === 'projects' && <ProjectsPage isLoading={pageState.isLoading} />}
-            {pageState.page === 'contact' && <ContactPage isLoading={pageState.isLoading} />}
-          </motion.div>
-        </AnimatePresence>
+      <GalaxyBackground />
+      <div className="site-grain" aria-hidden="true" />
+
+      <div className="relative z-10">
+        <Navigation currentPage={pageState.page} onNavigate={handleNavigate} />
+
+        <div id="main">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pageState.page}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.28 }}
+            >
+              {pageState.page === 'home' && (
+                <HomePage
+                  onStartProject={() => handleNavigate('contact')}
+                  onViewProjects={() => handleNavigate('projects')}
+                />
+              )}
+              {pageState.page === 'resume' && <ResumePage isLoading={pageState.isLoading} />}
+              {pageState.page === 'projects' && <ProjectsPage isLoading={pageState.isLoading} />}
+              {pageState.page === 'contact' && <ContactPage isLoading={pageState.isLoading} />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

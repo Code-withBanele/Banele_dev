@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Montserrat:wght@400;500;600;700&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --font-size: 16px;
-  --font-display: 'Jersey 10', sans-serif;
-  --font-body: 'Montserrat', sans-serif;
+  --font-display: 'Caesar Dressing', sans-serif;
+  --font-body: 'IBM Plex Serif', sans-serif;
   --font-code: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 
   --void: #070708;
